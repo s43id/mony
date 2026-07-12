@@ -8,7 +8,10 @@ interface Props {
   disabled: boolean;
 }
 
-const num = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+const money = (n: number) => `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+// Signed money for the Return column (keeps the minus sign in front of the $).
+const signedMoney = (n: number) =>
+  `${n < 0 ? '-' : ''}$${Math.abs(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 
 export default function TradeTable({ history, nextStake, capitalBefore, onResult, disabled }: Props) {
   return (
@@ -29,11 +32,11 @@ export default function TradeTable({ history, nextStake, capitalBefore, onResult
             <tr key={i} className={step.result === 'W' ? 'row-win' : 'row-loss'}>
               <td>{i + 1}</td>
               <td>{step.result}</td>
-              <td>{num(step.stake)}</td>
+              <td>{money(step.stake)}</td>
               <td className={step.result === 'W' ? 'positive' : 'negative'}>
-                {step.result === 'W' ? num(step.profitIfWin) : num(-step.stake)}
+                {step.result === 'W' ? signedMoney(step.profitIfWin) : signedMoney(-step.stake)}
               </td>
-              <td>{num(step.capitalAfter)}</td>
+              <td>{money(step.capitalAfter)}</td>
             </tr>
           ))}
           {!disabled && (
@@ -47,9 +50,9 @@ export default function TradeTable({ history, nextStake, capitalBefore, onResult
                   L
                 </button>
               </td>
-              <td>{num(nextStake)}</td>
+              <td>{money(nextStake)}</td>
               <td>&mdash;</td>
-              <td>{num(capitalBefore)}</td>
+              <td>{money(capitalBefore)}</td>
             </tr>
           )}
         </tbody>
