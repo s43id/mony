@@ -1,4 +1,4 @@
-import type { TradeStep } from '../lib/masaniello';
+import type { TradeStep } from '../lib/engine';
 
 interface Props {
   history: TradeStep[];

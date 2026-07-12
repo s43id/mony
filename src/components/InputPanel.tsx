@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import type { PlanInputs } from '../lib/masaniello';
+import type { PlanInputs } from '../lib/engine';
 
 interface Props {
   inputs: PlanInputs;

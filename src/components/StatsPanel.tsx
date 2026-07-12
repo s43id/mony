@@ -1,4 +1,4 @@
-import type { PlanInputs, TradeState } from '../lib/masaniello';
+import type { PlanInputs, TradeState } from '../lib/engine';
 
 interface Props {
   state: TradeState;

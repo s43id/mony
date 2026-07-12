@@ -1,5 +1,5 @@
 /**
- * Masaniello-method money management engine.
+ * Money management calculation engine.
  * Ported from Money-2.xlsx ("Dollar MM" / "Dollar MM1" sheets).
  * Framework-agnostic: no DOM or Electron dependencies, safe to reuse as-is
  * in a future Capacitor (Android) or other build.

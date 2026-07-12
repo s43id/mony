@@ -7,7 +7,7 @@ import {
   getSessionStatus,
   initialTradeState,
   type PlanInputs,
-} from './masaniello';
+} from './engine';
 
 // Fixture values taken directly from Money-2.xlsx's cached cell results
 // (Initial Capital 20, Trades 5, Win Trades 2, Quota 1.75, 100% reinvest).

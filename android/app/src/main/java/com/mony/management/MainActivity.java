@@ -1,4 +1,4 @@
-package com.mony.masaniello;
+package com.mony.management;
 
 import com.getcapacitor.BridgeActivity;
 
