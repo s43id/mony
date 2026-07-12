@@ -32,7 +32,8 @@ export default function TradeTable({
           ↶ Undo last
         </button>
       </div>
-      <table className="trade-table">
+      <div className="table-scroll">
+        <table className="trade-table">
         <thead>
           <tr>
             <th>Trade No</th>
@@ -71,7 +72,8 @@ export default function TradeTable({
             </tr>
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
     </section>
   );
 }
