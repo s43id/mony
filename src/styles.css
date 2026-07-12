@@ -1,3 +1,4 @@
+/* Light theme (default). */
 :root {
   color-scheme: light dark;
   --bg: #f5f6f8;
@@ -12,8 +13,20 @@
   --loss-bg: #fce8e6;
 }
 
+/* Dark values, shared by an explicit choice and the system preference. */
+:root[data-theme='dark'] {
+  --bg: #14161a;
+  --panel-bg: #1f2229;
+  --border: #33383f;
+  --text: #e8eaed;
+  --muted: #9aa0a6;
+  --win-bg: #16281c;
+  --loss-bg: #2c1917;
+}
+
+/* Follow the system when the user has not explicitly chosen light. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #14161a;
     --panel-bg: #1f2229;
     --border: #33383f;
@@ -41,9 +54,38 @@ body {
   padding: 24px 16px 64px;
 }
 
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .app-header h1 {
   margin: 0 0 4px;
   font-size: 1.5rem;
+}
+
+.theme-toggle {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.panel-head h2 {
+  margin: 0;
+}
+
+.undo:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .subtitle {
