@@ -9,7 +9,7 @@ import {
   type PlanInputs,
   type TradeState,
   type TradeStep,
-} from './lib/masaniello';
+} from './lib/engine';
 import InputPanel from './components/InputPanel';
 import PlanSummaryView from './components/PlanSummary';
 import TradeTable from './components/TradeTable';
@@ -74,7 +74,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-titles">
-          <h1>Masaniello Money Management</h1>
+          <h1>Money Management</h1>
           <p className="subtitle">Binary options capital management calculator</p>
         </div>
         <ThemeToggle />

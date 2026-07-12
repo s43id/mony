@@ -11,7 +11,7 @@ function createWindow() {
     height: 800,
     minWidth: 640,
     minHeight: 600,
-    title: 'Mony Money Management',
+    title: 'Money Management',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

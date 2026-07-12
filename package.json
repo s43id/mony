@@ -1,8 +1,8 @@
 {
-  "name": "mony-masaniello",
+  "name": "money-management",
   "private": true,
   "version": "1.0.0",
-  "description": "Masaniello-method money management calculator (desktop app)",
+  "description": "Money management calculator (desktop app)",
   "author": "s43id",
   "main": "dist-electron/main.js",
   "type": "module",
@@ -40,8 +40,8 @@
     "wait-on": "^8.0.1"
   },
   "build": {
-    "appId": "com.mony.masaniello",
-    "productName": "Mony Money Management",
+    "appId": "com.mony.management",
+    "productName": "Money Management",
     "directories": {
       "output": "release"
     },

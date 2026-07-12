@@ -1,4 +1,4 @@
-import type { PlanInputs, PlanSummary } from '../lib/masaniello';
+import type { PlanInputs, PlanSummary } from '../lib/engine';
 
 interface Props {
   summary: PlanSummary;
