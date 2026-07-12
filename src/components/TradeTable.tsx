@@ -5,6 +5,8 @@ interface Props {
   nextStake: number;
   capitalBefore: number;
   onResult: (result: 'W' | 'L') => void;
+  onUndo: () => void;
+  canUndo: boolean;
   disabled: boolean;
 }
 
@@ -13,10 +15,23 @@ const money = (n: number) => `$${n.toLocaleString(undefined, { maximumFractionDi
 const signedMoney = (n: number) =>
   `${n < 0 ? '-' : ''}$${Math.abs(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 
-export default function TradeTable({ history, nextStake, capitalBefore, onResult, disabled }: Props) {
+export default function TradeTable({
+  history,
+  nextStake,
+  capitalBefore,
+  onResult,
+  onUndo,
+  canUndo,
+  disabled,
+}: Props) {
   return (
     <section className="panel">
-      <h2>Trades</h2>
+      <div className="panel-head">
+        <h2>Trades</h2>
+        <button type="button" className="undo" onClick={onUndo} disabled={!canUndo}>
+          ↶ Undo last
+        </button>
+      </div>
       <table className="trade-table">
         <thead>
           <tr>
