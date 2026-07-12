@@ -4,8 +4,8 @@ import {
   buildQuotaMatrix,
   computePlanSummary,
   computeStake,
+  getSessionStatus,
   initialTradeState,
-  isProgressionComplete,
   type PlanInputs,
 } from './masaniello';
 
@@ -76,13 +76,13 @@ describe('applyResult', () => {
     expect(nextState.wins).toBe(1);
   });
 
-  it('resets wins/losses to zero once the win target is reached', () => {
+  it('accumulates wins across the session without resetting', () => {
     const Q = buildQuotaMatrix(inputs.trades, inputs.winTrades, inputs.quota);
     let state = initialTradeState(inputs);
     ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
     expect(state.wins).toBe(1);
     ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
-    expect(state.wins).toBe(0);
+    expect(state.wins).toBe(2);
     expect(state.losses).toBe(0);
   });
 
@@ -92,34 +92,36 @@ describe('applyResult', () => {
     const { step } = applyResult(inputs, Q, state, 'W');
     expect(step.winRatioAfter).toBeCloseTo(1, 12); // (1+0)/(0+0+1)
   });
-
-  it('does not stop the progression when the win target is hit -- it resets and continues', () => {
-    const Q = buildQuotaMatrix(inputs.trades, inputs.winTrades, inputs.quota);
-    let state = initialTradeState(inputs);
-    ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
-    ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
-    expect(state.wins).toBe(0);
-    expect(isProgressionComplete(inputs, state)).toBe(false);
-  });
 });
 
-describe('isProgressionComplete', () => {
-  it('is false while the win target is still reachable', () => {
+describe('getSessionStatus', () => {
+  it('is active while the target is still reachable and not yet reached', () => {
     const Q = buildQuotaMatrix(inputs.trades, inputs.winTrades, inputs.quota);
     let state = initialTradeState(inputs);
+    ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
+    expect(getSessionStatus(inputs, state)).toBe('active');
     ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    expect(isProgressionComplete(inputs, state)).toBe(false);
+    expect(getSessionStatus(inputs, state)).toBe('active');
   });
 
-  it('is true once losses make the win target unreachable within the cycle', () => {
+  it('is won once the win target is reached', () => {
     const Q = buildQuotaMatrix(inputs.trades, inputs.winTrades, inputs.quota);
     let state = initialTradeState(inputs);
+    ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
+    ({ nextState: state } = applyResult(inputs, Q, state, 'W'));
+    expect(state.wins).toBe(inputs.winTrades);
+    expect(getSessionStatus(inputs, state)).toBe('won');
+  });
+
+  it('is lost once losses make the win target unreachable (trades - winTrades + 1 losses)', () => {
+    const Q = buildQuotaMatrix(inputs.trades, inputs.winTrades, inputs.quota);
+    let state = initialTradeState(inputs);
+    // trades=5, winTrades=2 -> 4 losses ends the session.
+    for (let i = 0; i < inputs.trades - inputs.winTrades; i++) {
+      ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
+      expect(getSessionStatus(inputs, state)).toBe('active');
+    }
     ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    ({ nextState: state } = applyResult(inputs, Q, state, 'L'));
-    expect(isProgressionComplete(inputs, state)).toBe(true);
+    expect(getSessionStatus(inputs, state)).toBe('lost');
   });
 });

@@ -4,8 +4,8 @@ import {
   buildQuotaMatrix,
   computePlanSummary,
   computeStake,
+  getSessionStatus,
   initialTradeState,
-  isProgressionComplete,
   type PlanInputs,
   type TradeState,
   type TradeStep,
@@ -41,8 +41,9 @@ export default function App() {
   );
 
   const summary = useMemo(() => computePlanSummary(inputs, Q), [inputs, Q]);
-  const nextStake = started ? computeStake(Q, state) : 0;
-  const complete = started && isProgressionComplete(inputs, state);
+  const status = started ? getSessionStatus(inputs, state) : 'active';
+  const complete = status !== 'active';
+  const nextStake = started && !complete ? computeStake(Q, state) : 0;
 
   function handleStart(newInputs: PlanInputs) {
     setInputs(newInputs);
@@ -89,7 +90,7 @@ export default function App() {
       {started && (
         <>
           <PlanSummaryView summary={summary} inputs={inputs} />
-          <StatsPanel state={state} inputs={inputs} history={history} />
+          <StatsPanel state={state} inputs={inputs} />
           <TradeTable
             history={history}
             nextStake={nextStake}
@@ -100,10 +101,17 @@ export default function App() {
             disabled={complete}
           />
           {complete && (
-            <p className="complete-banner">
-              Too many losses to reach the win target within this cycle. Use Undo to step back, or
-              adjust the inputs above and start again to run a new plan.
-            </p>
+            <div className={`session-banner ${status === 'won' ? 'session-won' : 'session-lost'}`}>
+              <strong>
+                {status === 'won' ? '🎉 Session won' : '❌ Session lost'} — session finished
+              </strong>
+              <span>
+                {status === 'won'
+                  ? `Reached the ${inputs.winTrades} win target in ${history.length} trades.`
+                  : `Too many losses to reach the ${inputs.winTrades} win target within ${inputs.trades} trades.`}{' '}
+                Use Undo to step back, or Reset to start a new session.
+              </span>
+            </div>
           )}
         </>
       )}

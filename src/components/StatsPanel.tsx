@@ -1,48 +1,43 @@
-import type { PlanInputs, TradeState, TradeStep } from '../lib/masaniello';
+import type { PlanInputs, TradeState } from '../lib/masaniello';
 
 interface Props {
   state: TradeState;
   inputs: PlanInputs;
-  history: TradeStep[];
 }
 
-// Mirrors the win/loss block on the "Dollar MM" sheet (I17/I18 with the
-// COUNTIF-based counts J17/J18 and the K17/K18 percentages), plus the running
-// cycle counters (the H/I columns of the hidden "Dollar MM1" sheet).
-export default function StatsPanel({ state, inputs, history }: Props) {
-  const totalWins = history.filter((s) => s.result === 'W').length;
-  const totalLosses = history.filter((s) => s.result === 'L').length;
-  const played = totalWins + totalLosses;
-  const winPct = played === 0 ? 0 : totalWins / played;
-  const lossPct = played === 0 ? 0 : totalLosses / played;
+// Session progress: wins toward the target and losses toward the point where
+// the target is no longer reachable. Both thresholds come from the Trades /
+// Win Trades inputs, so they double as the session's win/lose conditions.
+export default function StatsPanel({ state, inputs }: Props) {
+  const played = state.wins + state.losses;
+  const winPct = played === 0 ? 0 : state.wins / played;
+  const lossLimit = inputs.trades - inputs.winTrades + 1;
 
   return (
     <section className="panel">
       <h2>Winnigs</h2>
       <div className="stat-grid">
         <div className="stat">
-          <span className="stat-label">Trades Win</span>
-          <span className="stat-value">
-            {totalWins} <small>({(winPct * 100).toFixed(1)}%)</small>
-          </span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Trades Loose</span>
-          <span className="stat-value">
-            {totalLosses} <small>({(lossPct * 100).toFixed(1)}%)</small>
-          </span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Wins in Current Cycle</span>
+          <span className="stat-label">Wins (need {inputs.winTrades} to win)</span>
           <span className="stat-value">
             {state.wins} / {inputs.winTrades}
           </span>
         </div>
         <div className="stat">
-          <span className="stat-label">Losses in Current Cycle</span>
+          <span className="stat-label">Losses ({lossLimit} loses the session)</span>
           <span className="stat-value">
-            {state.losses} / {inputs.trades - inputs.winTrades + 1}
+            {state.losses} / {lossLimit}
           </span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Trades Played</span>
+          <span className="stat-value">
+            {played} / {inputs.trades}
+          </span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Win Rate</span>
+          <span className="stat-value">{(winPct * 100).toFixed(1)}%</span>
         </div>
       </div>
     </section>
