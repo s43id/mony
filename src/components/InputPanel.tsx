@@ -8,15 +8,23 @@ interface Props {
   onReset?: () => void;
 }
 
-type FormState = { [K in keyof PlanInputs]: string };
+// Only the four inputs exposed by the "Dollar MM" sheet are user-editable.
+// `withdrawPct` mirrors the hidden L5 parameter ("% da reinvestire"), which the
+// workbook keeps fixed at 100, so it is carried through unchanged rather than
+// shown as a field.
+type FormState = {
+  initialCapital: string;
+  trades: string;
+  winTrades: string;
+  percentage: string;
+};
 
 function toFormState(inputs: PlanInputs): FormState {
   return {
     initialCapital: String(inputs.initialCapital),
     trades: String(inputs.trades),
     winTrades: String(inputs.winTrades),
-    quota: String(inputs.quota),
-    withdrawPct: String(inputs.withdrawPct),
+    percentage: String(inputs.quota),
   };
 }
 
@@ -29,14 +37,13 @@ export default function InputPanel({ inputs, disabled, onStart, onReset }: Props
   }
 
   function validate(parsed: PlanInputs): string | null {
-    if (!(parsed.initialCapital > 0)) return 'Initial Capital must be greater than 0.';
+    // Matches the xlsx data-validation rules on J6/J7/J8/J9.
+    if (!(parsed.initialCapital > 0)) return 'Intial Capital must be greater than 0.';
     if (!(Number.isInteger(parsed.trades) && parsed.trades >= 1 && parsed.trades <= 100))
       return 'Trades must be a whole number between 1 and 100.';
     if (!(parsed.winTrades > 0 && parsed.winTrades < parsed.trades + 1))
       return 'Win Trades must be greater than 0 and no more than Trades.';
-    if (!(parsed.quota > 1)) return 'Winning Ratio must be greater than 1.';
-    if (!(parsed.withdrawPct >= 0 && parsed.withdrawPct <= 100))
-      return '% to Reinvest must be between 0 and 100.';
+    if (!(parsed.quota > 1)) return 'Percentage must be greater than 1.';
     return null;
   }
 
@@ -46,10 +53,14 @@ export default function InputPanel({ inputs, disabled, onStart, onReset }: Props
       initialCapital: Number(form.initialCapital),
       trades: Number(form.trades),
       winTrades: Number(form.winTrades),
-      quota: Number(form.quota),
-      withdrawPct: Number(form.withdrawPct),
+      quota: Number(form.percentage),
+      withdrawPct: inputs.withdrawPct, // fixed internal parameter (100), as in the xlsx
     };
-    if (Object.values(parsed).some((v) => Number.isNaN(v))) {
+    if (
+      [parsed.initialCapital, parsed.trades, parsed.winTrades, parsed.quota].some((v) =>
+        Number.isNaN(v),
+      )
+    ) {
       setError('All fields must be valid numbers.');
       return;
     }
@@ -67,7 +78,7 @@ export default function InputPanel({ inputs, disabled, onStart, onReset }: Props
       <h2>Plan</h2>
       <div className="field-grid">
         <label>
-          Initial Capital
+          Intial Capital
           <input
             type="number"
             step="any"
@@ -101,26 +112,14 @@ export default function InputPanel({ inputs, disabled, onStart, onReset }: Props
           />
         </label>
         <label>
-          Winning Ratio (quota)
+          Percentage
           <input
             type="number"
             step="any"
             min="1"
             disabled={disabled}
-            value={form.quota}
-            onChange={(e) => set('quota', e.target.value)}
-          />
-        </label>
-        <label>
-          % to Reinvest
-          <input
-            type="number"
-            step="any"
-            min="0"
-            max="100"
-            disabled={disabled}
-            value={form.withdrawPct}
-            onChange={(e) => set('withdrawPct', e.target.value)}
+            value={form.percentage}
+            onChange={(e) => set('percentage', e.target.value)}
           />
         </label>
       </div>
