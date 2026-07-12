@@ -200,6 +200,13 @@ button.loss {
   color: var(--muted);
 }
 
+/* Lets the table scroll within the panel instead of bleeding off-screen on
+   narrow phones. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .trade-table {
   width: 100%;
   border-collapse: collapse;
@@ -247,4 +254,58 @@ button.loss {
   text-align: center;
   color: var(--muted);
   font-style: italic;
+}
+
+/* Keep money values on one line so they never wrap mid-number; the scroll
+   container handles any overflow. */
+.trade-table td,
+.trade-table th {
+  white-space: nowrap;
+}
+
+/* Phone layout. */
+@media (max-width: 560px) {
+  .app {
+    padding: 16px 10px 48px;
+  }
+
+  .app-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .panel {
+    padding: 14px 14px;
+  }
+
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+  }
+
+  .stat-grid {
+    gap: 12px 10px;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+  }
+
+  .trade-table th,
+  .trade-table td {
+    padding: 8px 5px;
+    font-size: 0.8rem;
+  }
+
+  .trade-table th {
+    font-size: 0.7rem;
+  }
+
+  .pending-actions {
+    gap: 5px;
+  }
+
+  .pending-actions button {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
 }
