@@ -89,15 +89,23 @@ export interface TradeStep {
   winRatioAfter: number;
 }
 
+export type SessionStatus = 'active' | 'won' | 'lost';
+
 /**
- * True once too many losses have accumulated for the win target to still be
- * reachable within the remaining trades of the current cycle (a "bust").
- * Reaching the win target itself does not stop the progression: wins/losses
- * reset to zero and a fresh cycle begins on the same running capital (see
- * `applyResult`), matching the xlsx's default (L4=0) continuous mode.
+ * A session runs over `trades` events and needs `winTrades` wins:
+ *  - 'won'  once the win target is reached (`wins >= winTrades`).
+ *  - 'lost' once so many losses have accumulated that the target can no longer
+ *    be reached in the remaining trades (`losses > trades - winTrades`, i.e.
+ *    fewer than `winTrades` trades remain).
+ *  - 'active' otherwise — the session is still in progress.
+ *
+ * Both thresholds are derived from the Trades / Win Trades inputs, so the
+ * session always resolves within `trades` results.
  */
-export function isProgressionComplete(inputs: PlanInputs, state: TradeState): boolean {
-  return state.losses > inputs.trades - inputs.winTrades;
+export function getSessionStatus(inputs: PlanInputs, state: TradeState): SessionStatus {
+  if (state.wins >= inputs.winTrades) return 'won';
+  if (state.losses > inputs.trades - inputs.winTrades) return 'lost';
+  return 'active';
 }
 
 /**
@@ -139,13 +147,11 @@ export function applyResult(
   const maxCapitalAfter = Math.max(capitalAfter, state.maxCapital);
   const winRatioAfter = ((isWin ? 1 : 0) + state.wins) / (state.losses + state.wins + 1);
 
-  let winsAfter = state.wins + (isWin ? 1 : 0);
-  let lossesAfter = state.losses + (isWin ? 0 : 1);
-  if (winsAfter >= inputs.winTrades) {
-    // Target reached: a fresh progression starts on the next trade.
-    winsAfter = 0;
-    lossesAfter = 0;
-  }
+  // Wins and losses accumulate for the whole session; the session ends (see
+  // getSessionStatus) once the win target is hit or the target becomes
+  // unreachable, at which point no further results are entered.
+  const winsAfter = state.wins + (isWin ? 1 : 0);
+  const lossesAfter = state.losses + (isWin ? 0 : 1);
 
   const step: TradeStep = {
     stake,

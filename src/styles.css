@@ -250,10 +250,38 @@ button.loss {
   justify-content: center;
 }
 
-.complete-banner {
+.session-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
   text-align: center;
+}
+
+.session-banner span {
   color: var(--muted);
-  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.session-won {
+  border-color: var(--win);
+  background: var(--win-bg);
+}
+
+.session-won strong {
+  color: var(--win);
+}
+
+.session-lost {
+  border-color: var(--loss);
+  background: var(--loss-bg);
+}
+
+.session-lost strong {
+  color: var(--loss);
 }
 
 /* Keep money values on one line so they never wrap mid-number; the scroll
