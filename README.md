@@ -1,0 +1,40 @@
+# Mony — Masaniello Money Management
+
+A desktop port of `Money-2.xlsx`: a Masaniello-method money management
+calculator for binary-options trading. Given an initial capital, a number of
+trades, a target number of wins, a winning ratio (quota), and a
+reinvestment percentage, it computes the stake for each trade so that
+hitting the target win count within the trade count returns a fixed,
+predictable profit — regardless of the order wins and losses occur in.
+
+Built with Electron + React + TypeScript so the same codebase can be
+packaged for Windows now and Android (via Capacitor) or macOS later.
+
+## Development
+
+```
+npm install
+npm test          # unit tests for the calculation engine
+npm run electron:dev   # run the desktop app locally
+```
+
+## Building the Windows installer
+
+```
+npm run dist:win
+```
+
+Produces an NSIS installer and a portable `.exe` in `release/`. This also
+runs automatically on GitHub Actions (`.github/workflows/build-windows.yml`)
+on every push to `main` and on version tags (`v*`), which also attaches the
+installer to the GitHub Release.
+
+## Project structure
+
+- `src/lib/masaniello.ts` — the calculation engine, ported from the
+  workbook's hidden "Dollar MM1" sheet and verified against its cached
+  values in `src/lib/masaniello.test.ts`. Framework-agnostic, reusable as-is
+  for a future mobile build.
+- `src/components/` — the UI: input form, plan summary, trade log, stats.
+- `electron/` — the Electron main/preload processes.
+- `Money-2.xlsx` — the original spreadsheet this app replicates.
