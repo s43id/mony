@@ -41,8 +41,8 @@ export default function InputPanel({ inputs, disabled, onStart, onReset }: Props
     if (!(parsed.initialCapital > 0)) return 'Intial Capital must be greater than 0.';
     if (!(Number.isInteger(parsed.trades) && parsed.trades >= 1 && parsed.trades <= 100))
       return 'Trades must be a whole number between 1 and 100.';
-    if (!(parsed.winTrades > 0 && parsed.winTrades < parsed.trades + 1))
-      return 'Win Trades must be greater than 0 and no more than Trades.';
+    if (!(Number.isInteger(parsed.winTrades) && parsed.winTrades > 0 && parsed.winTrades <= parsed.trades))
+      return 'Win Trades must be a whole number greater than 0 and no more than Trades.';
     if (!(parsed.quota > 1)) return 'Percentage must be greater than 1.';
     return null;
   }
@@ -74,7 +74,7 @@ export default function InputPanel({ inputs, disabled, onStart, onReset }: Props
   }
 
   return (
-    <form className="panel input-panel" onSubmit={handleSubmit}>
+    <form className="panel input-panel" onSubmit={handleSubmit} noValidate>
       <h2>Plan</h2>
       <div className="field-grid">
         <label>

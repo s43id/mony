@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Masaniello-method money management calculator (desktop app)",
+  "author": "s43id",
   "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {
@@ -43,6 +44,7 @@
       "dist-electron/**/*"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         { "target": "nsis", "arch": ["x64"] },
         { "target": "portable", "arch": ["x64"] }

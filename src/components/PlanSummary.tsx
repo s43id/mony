@@ -5,7 +5,8 @@ interface Props {
   inputs: PlanInputs;
 }
 
-const currency = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+const currency = (n: number) =>
+  `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 const percent = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 // Mirrors the "MM Plan" block on the "Dollar MM" sheet (cells I12/I13/I14).
