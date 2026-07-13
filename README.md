@@ -30,6 +30,18 @@ automatically on GitHub Actions (`.github/workflows/build-windows.yml`) on
 every push to `main` and on version tags (`v*`), which also attaches the
 installer to the GitHub Release.
 
+## Building the macOS app
+
+```
+npm run dist:mac
+```
+
+Must be run on macOS. Produces a `.dmg` (arm64 + x64) in `release/`. This also
+runs automatically on GitHub Actions (`.github/workflows/build-mac.yml`) using a
+`macos-latest` runner and uploads the `.dmg` as a build artifact. The build is
+unsigned, so on first launch macOS Gatekeeper requires right-click → Open (or
+System Settings → Privacy & Security → Open Anyway).
+
 ## Building the Android APK
 
 ```
